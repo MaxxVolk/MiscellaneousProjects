@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
+using SCOMAuthoringBook.Library.Helpers;
 
 namespace SQLProductKey
 {
@@ -15,13 +15,13 @@ namespace SQLProductKey
 
       Console.WriteLine("1");
 
-      if (!ServiceHelper.RegistryKeyExists(PrincipalName, "HKLM:\\SOFTWARE\\Microsoft\\Microsoft SQL Server\\Instance Names"))
+      if (!RegistryHelper.RegistryKeyExists(PrincipalName, "HKLM:\\SOFTWARE\\Microsoft\\Microsoft SQL Server\\Instance Names"))
       {
         Console.WriteLine("No SQL Server instances found.");
         return;
       }
 
-      RegistryKey sqlRoot = ServiceHelper.GetRegistryKey(PrincipalName, "HKLM:\\SOFTWARE\\Microsoft\\Microsoft SQL Server");
+      RegistryKey sqlRoot = RegistryHelper.GetRegistryKey(PrincipalName, "HKLM:\\SOFTWARE\\Microsoft\\Microsoft SQL Server");
       RegistryKey instanceListRoot = sqlRoot.OpenSubKey("Instance Names");
       foreach (string roleTypeKeyName in instanceListRoot.GetSubKeyNames())
       {
@@ -71,9 +71,9 @@ namespace SQLProductKey
                 for (int ver = 140; ver >= 70; ver = ver - 10)
                 {
                   string regPath = string.Format(template, ver);
-                  if (ServiceHelper.RegistryKeyExists(PrincipalName, regPath))
+                  if (RegistryHelper.RegistryKeyExists(PrincipalName, regPath))
                   {
-                    RegistryKey productKey = ServiceHelper.GetRegistryKey(PrincipalName, regPath);
+                    RegistryKey productKey = RegistryHelper.GetRegistryKey(PrincipalName, regPath);
                     foreach (string prdSubKey in productKey.GetValueNames())
                       if (prdSubKey.IndexOf("DigitalProductID") >= 0)
                       {
@@ -114,37 +114,6 @@ namespace SQLProductKey
     }
 
     private static string charsArray = "BCDFGHJKMPQRTVWXY2346789";
-
-    private static string RecoveryProductKeyFromBinaryOld(byte[] regBinary)
-    {
-      if (regBinary == null)
-        return null;
-
-      try
-      {
-        string productKey = "";
-        for (int i = 24; i >= 0; i--)
-        {
-          int k = 0;
-          for (int j = 14; j >= 0; j--)
-          {
-            k = k * 256 ^ regBinary[j];
-            regBinary[j] = Convert.ToByte(k / 24);
-            k = k % 24;
-          }
-          productKey = charsArray[k] + productKey;
-          if ((i % 5 == 0) && (i != 0))
-          {
-            productKey = "-" + productKey;
-          }
-        }
-        return productKey;
-      }
-      catch
-      {
-        return null;
-      }
-    }
 
     private static string RecoveryProductKeyFromBinary(byte[] regBinary)
     {
