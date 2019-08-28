@@ -55,5 +55,5 @@ public ResultWrapper<bool> TrySetMessageParallelCompleted(long MessageId, string
 ```
 Set a message as completed with success for the specific parallel instance. The 'messageStatusMessage' parameter may contain success notes. This completition status doesn't affect the root message status, which should be set explicitly by calling either non-parallel `TrySetMessageFailed` or `TrySetMessageCompleted` methods. There is no way to rollup indicidual parallel statuses to the root message status, because the number of parallel processes is unknown, and a new parallel process can be added at any time until the root message hasn't completed.
 
-
-
+## Database Cache ##
+`DBCache` class implements a persistent cache to transfer information between micro services.
