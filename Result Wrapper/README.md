@@ -8,19 +8,21 @@ The namespace provides `FailureReason` enumeration with some most common failure
 
 ## Example ##
 ### Method Declaration ###
-`public ResultWrapper<Tuple<long, string>> TryPeekMessageForProcessing(string messageType, int messageTimeoutSeconds)
+```
+public ResultWrapper<Tuple<long, string>> TryPeekMessageForProcessing(string messageType, int messageTimeoutSeconds)
 {
   <...>
   return new ResultWrapper<Tuple<long, string>>(result);
   <...>
   return new ResultWrapper<Tuple<long, string>>(FailureReason.NotFound);
-}`
+}
+```
 
 ### Usage ###
-'
+```
 ResultWrapper<Tuple<long, string>> currentTask = <...>.TryPeekMessageForProcessing(DBNames.EnrollCertificateTask, 180);
 if (currentTask.IsOK)
 {
   <...>
 }
-'
+```
